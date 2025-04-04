@@ -19,7 +19,7 @@ namespace MultithreadingHotel.View
         public MainWindow()
         {
             InitializeComponent();
-            _hotel = new Hotel(10);
+            _hotel = new Hotel(10,this.Dispatcher);
             DataContext = _hotel;
             _hotel.StartTouristFlow();
         }

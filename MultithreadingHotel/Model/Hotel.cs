@@ -1,21 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace MultithreadingHotel.Model
 {
     internal class Hotel
     {
-        private List<HotelRoom> _rooms = new();
+        public ObservableCollection<HotelRoom> Rooms { get; } = new();
         private object _lock = new object();
+        private Dispatcher _dispatcher;
 
-        public Hotel(int roomCount) 
+        public Hotel(int roomCount, Dispatcher dispatcher) 
         {
+            _dispatcher = dispatcher;
             for (int i = 0; i < roomCount; i++) 
             {
-                _rooms.Add(new HotelRoom(2, 100)); 
+                Rooms.Add(new HotelRoom(2, 100)); 
             }
         }
 
@@ -26,9 +30,9 @@ namespace MultithreadingHotel.Model
 
                 while (true)
                 {
-                    Thread.Sleep(random.Next(5000, 10000));
+                    Thread.Sleep(random.Next(1000, 3000));
 
-                    Tourist tourist = new Tourist(2, 5);
+                    Tourist tourist = new Tourist(1, 2);
 
                     Task.Run(() => TryCheckIn(tourist));
                 }
@@ -39,16 +43,20 @@ namespace MultithreadingHotel.Model
         {
             lock (_lock) 
             {
-                HotelRoom? freeRoom = _rooms.FirstOrDefault(r => !r.Busy && r.SleepPlaces >= tourist.TouristCount);
+                HotelRoom? freeRoom = Rooms.FirstOrDefault(r => !r.Busy && r.SleepPlaces >= tourist.TouristCount);
                 if (freeRoom != null)
                 {
+                    _dispatcher.Invoke(() => freeRoom.Busy = true);
+
                     freeRoom.Busy = true;
 
                     Task.Run(() =>
                     {
-                        Thread.Sleep(tourist.OrderedDays * 1000);
+                        Thread.Sleep(tourist.OrderedDays * 5000);
                         lock (_lock)
                         {
+                            _dispatcher.Invoke(() => freeRoom.Busy = false);
+
                             freeRoom.Busy = false;
 
                         }
