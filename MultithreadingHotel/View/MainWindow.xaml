@@ -7,6 +7,14 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
+        <DataGrid ItemsSource="{Binding Rooms}" AutoGenerateColumns="False" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="№" Binding="{Binding RoomId}" Width="50"/>
+                <DataGridTextColumn Header="Місць" Binding="{Binding SleepPlaces}" Width="80"/>
+                <DataGridTextColumn Header="Ціна/доба" Binding="{Binding CostPerDay}" Width="80"/>
+                <DataGridTextColumn Header="Статус" Binding="{Binding Busy}" Width="80"/>
+            </DataGrid.Columns>
+        </DataGrid>
 
     </Grid>
 </Window>
