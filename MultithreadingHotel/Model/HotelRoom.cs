@@ -8,10 +8,19 @@ namespace MultithreadingHotel.Model
 {
     class HotelRoom
     {
-        private int roomId;
-        private int _nextRoomId;
-        private int sleepPlaces;
-        private int costPerDay;
-        private bool busy = false;
+        private int RoomId { get; }
+        private int SleepPlaces { get; set; }
+        private int CostPerDay { get; set; }
+        private bool Busy { get; set; }
+
+        private static int _nextRoomId = 1;
+
+        public HotelRoom(int sleepPlaces, int costPerDay) 
+        {
+            RoomId = _nextRoomId++;
+            SleepPlaces = sleepPlaces;
+            CostPerDay = costPerDay;
+            Busy = false;
+        }
     }
 }
