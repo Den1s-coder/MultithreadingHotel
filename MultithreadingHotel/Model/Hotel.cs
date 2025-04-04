@@ -19,7 +19,7 @@ namespace MultithreadingHotel.Model
             }
         }
 
-        public void StartTouristFlow(int roomCount) 
+        public void StartTouristFlow() 
         {
             Task.Run(() => {
                 Random random = new();

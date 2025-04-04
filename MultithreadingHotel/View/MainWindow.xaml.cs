@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using MultithreadingHotel.Model;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -13,9 +14,14 @@ namespace MultithreadingHotel.View
 {
     public partial class MainWindow : Window
     {
+        private Hotel _hotel;
+
         public MainWindow()
         {
             InitializeComponent();
+            _hotel = new Hotel(10);
+            DataContext = _hotel;
+            _hotel.StartTouristFlow();
         }
     }
 }
