@@ -23,7 +23,7 @@ namespace MultithreadingHotel.View
         public MainWindow()
         {
             InitializeComponent();
-            _hotel = new Hotel(10,this.Dispatcher);
+            _hotel = new Hotel(30);
             DataContext = _hotel;
             _hotel.StartTouristFlow();
         }
