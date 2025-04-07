@@ -4,6 +4,28 @@
              xmlns:local="clr-namespace:MultithreadingHotel"
              StartupUri="View/MainWindow.xaml">
     <Application.Resources>
-         
+        <Style x:Key="WindowsButton" TargetType="Button">
+            <Setter Property="Background" Value="#FF1C617C" />
+            <Setter Property="Foreground" Value="#FF97AEE8"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="Height" Value="80"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="7">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FF1C4F7C"/>
+                    <Setter Property="Foreground" Value="#ffffffff"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Application.Resources>
 </Application>
