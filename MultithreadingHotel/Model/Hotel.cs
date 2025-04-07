@@ -14,8 +14,11 @@ namespace MultithreadingHotel.Model
     internal class Hotel
     {
         public ObservableCollection<HotelRoom> Rooms { get; } = new();
+
         private object _lock = new object();
         private Dispatcher _dispatcher;
+
+        public static event Action<TouristLog> OnNewLog;
 
         public Hotel(int roomCount, Dispatcher dispatcher) 
         {
@@ -73,6 +76,8 @@ namespace MultithreadingHotel.Model
                             };
 
                             LogToJson(touristLog);
+
+                            OnNewLog?.Invoke(touristLog);
                         }
                     });
                 }
@@ -99,7 +104,6 @@ namespace MultithreadingHotel.Model
 
             string newJson = JsonSerializer.Serialize(logs, new JsonSerializerOptions { WriteIndented = true});
             File.WriteAllText(fileName, newJson);
-        }
-            
+        }      
     }
 }

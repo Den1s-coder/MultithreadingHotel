@@ -1,5 +1,7 @@
 ﻿using MultithreadingHotel.Model;
+using System.IO;
 using System.Text;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -14,6 +16,8 @@ namespace MultithreadingHotel.View
 {
     public partial class MainWindow : Window
     {
+        public static LogWindow? LogWindow;
+
         private Hotel _hotel;
 
         public MainWindow()
@@ -22,6 +26,16 @@ namespace MultithreadingHotel.View
             _hotel = new Hotel(10,this.Dispatcher);
             DataContext = _hotel;
             _hotel.StartTouristFlow();
+        }
+
+        private void ShowLog_Click(object sender, RoutedEventArgs e)
+        {
+            if (LogWindow == null)
+            {
+                LogWindow = new LogWindow();
+                LogWindow.Closed += (s, args) => LogWindow = null;
+                LogWindow.Show();
+            }
         }
     }
 }

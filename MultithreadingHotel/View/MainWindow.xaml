@@ -5,8 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MultithreadingHotel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Готель" Height="450" Width="800">
     <Grid>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="600"/>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
         <DataGrid ItemsSource="{Binding Rooms}" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="№" Binding="{Binding RoomId}" Width="50"/>
@@ -16,5 +22,8 @@
             </DataGrid.Columns>
         </DataGrid>
 
+        <StackPanel Grid.Column="1" Background="#FF1C617C">
+            <Button Content="Показати журнал" Style="{StaticResource WindowsButton}" Click="ShowLog_Click" Height="95" Width="195"/>
+        </StackPanel>
     </Grid>
 </Window>
