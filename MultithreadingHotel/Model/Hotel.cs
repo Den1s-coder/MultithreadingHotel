@@ -16,33 +16,64 @@ namespace MultithreadingHotel.Model
         public ObservableCollection<HotelRoom> Rooms { get; } = new();
 
         private object _lock = new object();
-        private Dispatcher _dispatcher;
+        private bool _fullHotel = false;
 
         public static event Action<TouristLog> OnNewLog;
 
-        public Hotel(int roomCount, Dispatcher dispatcher) 
+        public Hotel(int roomCount) 
         {
-            _dispatcher = dispatcher;
             for (int i = 0; i < roomCount; i++) 
             {
                 Rooms.Add(new HotelRoom(2, 100)); 
             }
         }
 
-        public void StartTouristFlow() 
+        public void StartTouristFlow()
         {
-            Task.Run(() => {
+            Thread thread = new Thread(() =>
+            {
                 Random random = new();
 
                 while (true)
                 {
-                    Thread.Sleep(random.Next(1000, 3000));
+                    Thread.Sleep(random.Next(1000, 2000));
+
+                    if(!CanCheckIn()) 
+                        continue;
 
                     Tourist tourist = new Tourist(1, 2);
 
-                    Task.Run(() => TryCheckIn(tourist));
+                    Thread checkInThread = new Thread(() => TryCheckIn(tourist));
+                    checkInThread.Start();
                 }
             });
+            thread.IsBackground = true;
+            thread.Start();
+        }
+
+        public bool CanCheckIn()
+        {
+            int freeRoomCount = Rooms.Count(r => !r.Busy);
+            double freeRoomLimit = Rooms.Count * 0.5;
+
+            if(!_fullHotel)
+            {
+                if (freeRoomCount == 0)
+                {
+                    _fullHotel = true;
+                    return false;
+                }
+                return true;
+            }
+            else
+            {
+                if (freeRoomCount >= freeRoomLimit)
+                {
+                    _fullHotel = false;
+                    return true;
+                }
+                return false;
+            }
         }
 
         private void TryCheckIn(Tourist tourist) 
@@ -54,16 +85,14 @@ namespace MultithreadingHotel.Model
                 {
                     DateTime checkIn = DateTime.Now;
 
-                    _dispatcher.Invoke(() => freeRoom.Busy = true);
-
                     freeRoom.Busy = true;
 
-                    Task.Run(() =>
+                    Thread checkOutThread = new Thread(() =>
                     {
-                        Thread.Sleep(tourist.OrderedDays * 5000);
+                        Thread.Sleep(tourist.OrderedDays * 10000);
                         lock (_lock)
                         {
-                            _dispatcher.Invoke(() => freeRoom.Busy = false);
+                            freeRoom.Busy = false;
 
                             DateTime checkOut = DateTime.Now;
                             TouristLog touristLog = new() 
@@ -80,6 +109,7 @@ namespace MultithreadingHotel.Model
                             OnNewLog?.Invoke(touristLog);
                         }
                     });
+                    checkOutThread.Start();
                 }
                 else { }
             }
