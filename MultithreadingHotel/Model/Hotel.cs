@@ -16,6 +16,7 @@ namespace MultithreadingHotel.Model
         public ObservableCollection<HotelRoom> Rooms { get; } = new();
 
         private object _lock = new object();
+        private bool _fullHotel = false;
 
         public static event Action<TouristLog> OnNewLog;
 
@@ -35,7 +36,10 @@ namespace MultithreadingHotel.Model
 
                 while (true)
                 {
-                    Thread.Sleep(random.Next(500, 2000));
+                    Thread.Sleep(random.Next(1000, 2000));
+
+                    if(!CanCheckIn()) 
+                        continue;
 
                     Tourist tourist = new Tourist(1, 2);
 
@@ -45,6 +49,31 @@ namespace MultithreadingHotel.Model
             });
             thread.IsBackground = true;
             thread.Start();
+        }
+
+        public bool CanCheckIn()
+        {
+            int freeRoomCount = Rooms.Count(r => !r.Busy);
+            double freeRoomLimit = Rooms.Count * 0.5;
+
+            if(!_fullHotel)
+            {
+                if (freeRoomCount == 0)
+                {
+                    _fullHotel = true;
+                    return false;
+                }
+                return true;
+            }
+            else
+            {
+                if (freeRoomCount >= freeRoomLimit)
+                {
+                    _fullHotel = false;
+                    return true;
+                }
+                return false;
+            }
         }
 
         private void TryCheckIn(Tourist tourist) 
